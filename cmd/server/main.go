@@ -8,13 +8,13 @@ import (
 )
 
 func main() {
-	fmt.Println("Websocket server starting on :8080")
-
 	// Register the WebSocket handler
 	http.HandleFunc("/ws", websocket.WSHandler)
+	go websocket.HandleMessages()
 
-	// Star the server
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	fmt.Println("Websocket server starting on :8080")
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
 		fmt.Println("Error starting server:", err)
 	}
 }

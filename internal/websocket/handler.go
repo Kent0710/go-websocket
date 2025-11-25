@@ -14,7 +14,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func Handler(w http.ResponseWriter, r *http.Request) {
+func WSHandler(w http.ResponseWriter, r *http.Request) {
 	// Upgrade the HTTP connection to a WebSocket connection
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -24,9 +24,12 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 	defer conn.Close()
 
-	// Listen for incoming messages
+	// Use a goroutine to handle the connection
+	go HandleConnection(conn)
+}
+
+func HandleConnection(conn *websocket.Conn) {
 	for {
-		// Read message from the client
 		_, message, err := conn.ReadMessage()
 		if err != nil {
 			fmt.Println("Error reading message:", err)
@@ -34,9 +37,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		fmt.Println("Received message:", string(message))
-		// Send message back to the client
-		err = conn.WriteMessage(websocket.TextMessage, message)
-		if err != nil {
+
+		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
 			fmt.Println("Error writing message:", err)
 			break
 		}

@@ -11,7 +11,7 @@ func main() {
 	fmt.Println("Websocket server starting on :8080")
 
 	// Register the WebSocket handler
-	http.HandleFunc("/ws", websocket.Handler)
+	http.HandleFunc("/ws", websocket.WSHandler)
 
 	// Star the server
 	if err := http.ListenAndServe(":8080", nil); err != nil {
